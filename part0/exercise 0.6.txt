@@ -1,0 +1,19 @@
+Title user creates a new note in the SPA version
+
+note left of browser
+User input a new note into the text field
+and clicks the submit button in the browser
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note right of server: server saves the new note and respond with a status code of 201 created
+server-->browser: {"message":"note created"}
+
+note left of browser:
+The POST request to the address new_note_spa contains the new note as JSON-data containing both the content of the note (content) and the timestamp (date):
+{
+  content: "single page app does not reload the whole page",
+  date: "2019-05-25T15:15:59.905Z"
+}
+end note
