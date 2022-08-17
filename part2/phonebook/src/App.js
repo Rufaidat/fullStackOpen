@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Persons from "./components/persons";
 import Filter from "./components/filter";
 import PersonForm from "./components/form";
@@ -11,18 +12,32 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
 
+  //fetch data from db.json
+  const hook = () => {
+    axios.get("http://localhost:3001/persons").then((response) => {
+      setPersons(response.data);
+    });
+  };
+  // use useeffect to change the state of persons
+  useEffect(hook, []);
+
+  // function add name or not for form event listener
   const addName = (event) => {
     event.preventDefault();
+    // create a new object containing data to be added or not
     const newPerson = {
       name: newName,
       id: persons.length + 1,
       number: newNumber,
     };
-
+    // check if a contact name exist
     const checkName = persons.some((elem) => elem.name === newPerson.name);
+
     if (!checkName) {
+      //add contact if it doesnt exist
       setPersons(persons.concat(newPerson));
     } else {
+      //alert it already exist
       alert(`${newPerson.name} is already added to the phonebook`);
     }
     setNewName("");
@@ -41,7 +56,10 @@ const App = () => {
     setFilter(event.target.value);
   };
 
+  // check if persons name include the fiter input value
   const toShow = persons.every((elem) => elem.name.includes(filter));
+
+  //assign persons that contain the filter value to a variable
   const namesToShow = toShow
     ? persons
     : persons.filter((elem) => elem.name.includes(filter));
