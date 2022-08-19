@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Filter from "./components/filter";
 import Countries from "./components/countries";
+import SingleCountry from "./components/singleCountries";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -14,35 +15,48 @@ const App = () => {
       setCountries(response.data);
     });
   };
-  // use useeffect to change the state of persons
+  // use useeffect to change the state of countries
   useEffect(hook, []);
-
   // function for change in filter value
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   };
 
-  // check if persons name include the fiter input value
-  // const toShow = countries.every((elem) => elem.name.common.includes(filter));
+  // check if countries name include the fiter input value
+  const toShow = countries.filter((elem) => elem.name.common.includes(filter));
+  console.log(toShow);
 
-  const filteredCountries = countries.filter((elem) =>
-    elem.name.common.includes(filter)
-  );
-
-  //assign persons that contain the filter value to a variable
-  // let countriesToShow =
-  //   filteredCountries > 10 ? ["too many countries to show"] : filteredCountries;
+  // assign countries that contain the filter value to a variable
   const countriesToShow =
-    filteredCountries.length > 10
-      ? [{ name: "too many countries to show", id: 1 }]
-      : countries.filter((elem) => elem.name.common.includes(filter));
+    toShow.length < 10
+      ? toShow
+      : [{ name: { common: "Too many matches, specify another filter" } }];
+  console.log(countriesToShow);
+
   return (
     <div>
-      <Filter onChange={handleFilterChange} />;
+      <Filter onChange={handleFilterChange} />
       <div>
-        {countriesToShow.map((countries) => (
-          <Countries countries={countries} />
-        ))}
+        {/* {if(countriesToShow.length===1){
+<SingleCountry countries={countries}/>
+        }else{
+          countriesToShow.map((countries, index) => (
+            <Countries key={index} countries={countries} />
+          ))
+        }} */}
+        {/* {countriesToShow.map((countries, index) => (
+          // <Countries key={index} countries={countries} />
+          <SingleCountry key={index} countries={countries} />
+        ))} */}
+        {toShow.length === 1 ? (
+          <SingleCountry countries={toShow[0]} />
+        ) : toShow.length > 10 ? (
+          "Too many searches, specify another filter"
+        ) : (
+          toShow.map((country, index) => (
+            <Countries key={index} countries={country} />
+          ))
+        )}
       </div>
     </div>
   );
