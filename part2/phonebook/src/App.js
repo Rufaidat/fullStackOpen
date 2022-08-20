@@ -56,6 +56,11 @@ const App = () => {
     setFilter(event.target.value);
   };
 
+  // handle deleting a contact
+  const handleDelete = (id) => {
+    setPersons(persons.filter((n) => n.id !== id));
+  };
+
   // check if persons name include the fiter input value
   const toShow = persons.every((elem) => elem.name.includes(filter));
 
@@ -79,7 +84,11 @@ const App = () => {
       <h2>Numbers</h2>{" "}
       <div>
         {namesToShow.map((person) => (
-          <Persons key={person.id} person={person} />
+          <Persons
+            key={person.id}
+            person={person}
+            handleDelete={handleDelete}
+          />
         ))}
       </div>
     </div>

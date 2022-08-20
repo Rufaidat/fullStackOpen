@@ -4,7 +4,7 @@
       "id": 1,
       "content": "HTML is easy",
       "date": "2022-1-17T17:30:31.098Z",
-      "important": true
+      "important": false
     },
     {
       "id": 2,
@@ -21,14 +21,20 @@
     {
       "content": "a new note",
       "date": "2022-08-19T08:12:19.568Z",
-      "important": true,
+      "important": false,
       "id": 4
     },
     {
       "content": "hi testing testing",
       "date": "2022-08-19T08:18:13.377Z",
-      "important": false,
+      "important": true,
       "id": 5
+    },
+    {
+      "content": "a new note",
+      "date": "2022-08-19T10:51:10.242Z",
+      "important": false,
+      "id": 7
     }
   ]
 }

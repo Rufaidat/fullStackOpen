@@ -54,7 +54,8 @@ const App = () => {
           "Too many searches, specify another filter"
         ) : (
           toShow.map((country, index) => (
-            <Countries key={index} countries={country} />
+            <SingleCountry key={index} countries={country} />
+            // <Countries key={index} countries={country} />
           ))
         )}
       </div>
