@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Persons from "./components/persons";
 import Filter from "./components/filter";
 import PersonForm from "./components/form";
+import phoneService from "./services/phone";
+import Notification from "./components/notification";
+import Success from "./components/successMessage";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -11,15 +13,14 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
-
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   //fetch data from db.json
-  const hook = () => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+  useEffect(() => {
+    phoneService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
-  };
-  // use useeffect to change the state of persons
-  useEffect(hook, []);
+  }, []);
 
   // function add name or not for form event listener
   const addName = (event) => {
@@ -27,23 +28,71 @@ const App = () => {
     // create a new object containing data to be added or not
     const newPerson = {
       name: newName,
-      id: persons.length + 1,
       number: newNumber,
     };
     // check if a contact name exist
-    const checkName = persons.some((elem) => elem.name === newPerson.name);
+    const checkName = persons.find(
+      (person) =>
+        person.name.trim().toLowerCase() === newName.trim().toLowerCase()
+    );
 
     if (!checkName) {
       //add contact if it doesnt exist
-      setPersons(persons.concat(newPerson));
+      phoneService.create(newPerson).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+        setSuccessMessage(`added ${newPerson.name} successfully`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      });
     } else {
-      //alert it already exist
-      alert(`${newPerson.name} is already added to the phonebook`);
+      console.log(checkName);
+      if (
+        //if name exist ask the user to update or not
+        window.confirm(
+          `${newPerson.name} is already added to the phonebook,replace the old number with a new one`
+        )
+      ) {
+        //update if user asks to
+        phoneService
+          .update(checkName.id, newPerson)
+          .then((response) => {
+            console.log(response);
+            setPersons(
+              persons.map((person) => {
+                if (
+                  person.name.trim().toLowerCase() ===
+                  checkName.name.trim().toLowerCase()
+                )
+                  person.number = newNumber;
+                return person;
+              })
+            );
+            //set a success message
+            setSuccessMessage(` ${newPerson.name} updated successfully`);
+            setTimeout(() => {
+              setSuccessMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            //set an error message
+            setErrorMessage(
+              `information of ${newPerson.name} has already been removed from the server`
+            );
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+            setPersons(persons.filter((n) => n.id !== checkName.id));
+          });
+      }
     }
     setNewName("");
     setNewNumber("");
   };
 
+  //event handlers
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -56,22 +105,28 @@ const App = () => {
     setFilter(event.target.value);
   };
 
+  // filter contacts
+  const namesToShow = persons.filter((elem) =>
+    elem.name.trim().toLowerCase().includes(filter.trim().toLowerCase())
+  );
   // handle deleting a contact
   const handleDelete = (id) => {
-    setPersons(persons.filter((n) => n.id !== id));
+    const checkName = persons.find((person) => person.id === id);
+    phoneService.remove(id).then((returnedPerson) => {
+      setPersons(returnedPerson);
+      persons.filter((person) => person.id !== id);
+      setSuccessMessage(`${checkName.name} removed successfully`);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
+    });
   };
-
-  // check if persons name include the fiter input value
-  const toShow = persons.every((elem) => elem.name.includes(filter));
-
-  //assign persons that contain the filter value to a variable
-  const namesToShow = toShow
-    ? persons
-    : persons.filter((elem) => elem.name.includes(filter));
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification error={errorMessage} />
+      <Success success={successMessage} />
       <Filter onChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm
