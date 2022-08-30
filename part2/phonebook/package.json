@@ -18,7 +18,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "json-server -p3001 --watch db.json",
-    "build:ui": "rm -rf build && cd C:\\Users\\hp\\Desktop\\fullStackOpen\\part2\\phonebook  && npm run build && xcopy /S/I/E build C:\\Users\\hp\\Desktop\\phonebook-backend",
+    "build:ui": "rm -rf build && cd ../PHONEBOOK/  && npm run build && xcopy /S/I/E build C:/Users/hp/Desktop/phonebook-backend",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail"

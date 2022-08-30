@@ -35,7 +35,12 @@ const App = () => {
       (person) =>
         person.name.trim().toLowerCase() === newName.trim().toLowerCase()
     );
-
+    if (newName.length < 3) {
+      setErrorMessage(` ${newName} is shorter than the minimum length (3)`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
     if (!checkName) {
       //add contact if it doesnt exist
       phoneService.create(newPerson).then((returnedPerson) => {

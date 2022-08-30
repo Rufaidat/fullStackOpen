@@ -1,0 +1,19 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Uchenna",
+    "number": 8205
+}
+
+###
+GET http://localhost:3001/api/persons/630b4bd19fe7bd2bd0fc9cd4
+
+###
+PUT http://localhost:3001/api/persons/630c7bc1d51cb543607a8504
+Content-Type: application/json
+
+{
+    "name":"ref",
+    "number":524
+}
