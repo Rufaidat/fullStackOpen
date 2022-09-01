@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 
+const url = process.env.MONGODB_URI;
+
+console.log("connecting to", url);
 
 const blogSchema = new mongoose.Schema({
   title: String,
