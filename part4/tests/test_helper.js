@@ -35,11 +35,9 @@ const blogsInDb = async () => {
   return blogs.map((blog) => blog.toJSON());
 };
 
-const defaultLikesToZero = async () => {
-  const blogs = await Blog.find({});
-  return blogs.map((blog) => {
-    if (!blog.hasOwnProperty("likes")) blog.likes = 0;
-  });
+const usersInDb = async () => {
+  const user = await User.find({});
+  return users.map((u) => u.toJSON());
 };
 
-module.exports = { initialBlogs, blogsInDb, defaultLikesToZero };
+module.exports = { initialBlogs, blogsInDb, defaultLikesToZero, usersInDb };
