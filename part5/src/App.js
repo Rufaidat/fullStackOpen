@@ -5,7 +5,7 @@ import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Success from "./components/successMessage";
 import BlogForm from "./components/BlogForm";
-import Toggable from "./components/Togglable";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -55,22 +55,6 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
   };
-
-  // const addBlog = (event) => {
-
-  //   blogService.create(blogObject).then((returnedBlog) => {
-  //     setBlogs(blogs.concat(returnedBlog));
-  //     setTitle("");
-  //     setAuthor("");
-  //     setUrl("");
-  //     setSuccessMessage(
-  //       `a new blog "${blogObject.title}" ${blogObject.author} added`
-  //     );
-  //     setTimeout(() => {
-  //       setSuccessMessage(null);
-  //     }, 5000);
-  //   });
-  // };
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
@@ -127,12 +111,16 @@ const App = () => {
           <button type="submit" onClick={handleLogout}>
             log out
           </button>
-          <Toggable buttonLabel="new blog" ref={blogFormRef}>
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
-          </Toggable>
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          </Togglable>
+          {blogs
+            .sort((a, b) => {
+              return b.likes - a.likes;
+            })
+            .map((blog) => (
+              <Blog key={blog.id} blog={blog} />
+            ))}
         </div>
       )}
     </div>
