@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { like } from "../reducers/anecdoteReducer";
+
 const Anecdote = ({ anecdote, handleLike }) => {
   return (
     <div>
@@ -14,13 +15,15 @@ const Anecdote = ({ anecdote, handleLike }) => {
 
 const AnecdoteList = () => {
   const dispatch = useDispatch();
-  const anecdotes = useSelector((state) => state);
-
+  const anecdotes = useSelector((state) => state.anecdotes);
+  console.log(anecdotes);
   return (
     <div>
-      {anecdotes
+      {[...anecdotes]
         .sort((a, b) => {
-          return b.votes - a.votes;
+          if (a.votes - b.votes) return 1;
+          if (b.votes - a.votes) return -1;
+          return 0;
         })
         .map((anecdote) => (
           <Anecdote
