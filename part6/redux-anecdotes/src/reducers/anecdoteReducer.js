@@ -27,11 +27,9 @@ const anecdoteSlice = createSlice({
   reducers: {
     createAnecdote(state, action) {
       const anecdote = action.payload;
-      state.push({
-        anecdote,
-        votes: 0,
-        id: getId(),
-      });
+      const toAdd = { content: anecdote, votes: 0, id: getId() };
+      console.log(state);
+      state.push(toAdd);
     },
     like(state, action) {
       const id = action.payload;
@@ -44,50 +42,6 @@ const anecdoteSlice = createSlice({
     },
   },
 });
-
-// const anecdoteSlice = createSlice({
-//   name: 'anecdotes',
-//   initialState,
-//   reducers: {
-//       createAnecdote(state, action) {
-//         const content =
-//       }
-//   }
-// })
-//   switch (action.type) {
-//     case "NEW_ANECDOTE":
-//       return [...state, action.data];
-//     case "LIKE": {
-//       const id = action.data.id;
-//       const noteToChange = state.find((n) => n.id === id);
-//       const changedNote = {
-//         ...noteToChange,
-//         votes: noteToChange.votes + 1,
-//       };
-//       return state.map((note) => (note.id !== id ? note : changedNote));
-//     }
-//     default:
-//       return state;
-//   }
-// };
-
-// export const like = (id) => {
-//   return {
-//     type: "LIKE",
-//     data: { id },
-//   };
-// };
-
-// export const createAnecdote = (content) => {
-//   return {
-//     type: "NEW_ANECDOTE",
-//     data: {
-//       content,
-//       votes: 0,
-//       id: getId(),
-//     },
-//   };
-// };
 
 export const { createAnecdote, like } = anecdoteSlice.actions;
 export default anecdoteSlice.reducer;
