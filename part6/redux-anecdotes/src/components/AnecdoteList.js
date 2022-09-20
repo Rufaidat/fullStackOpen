@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { like } from "../reducers/anecdoteReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import { filters } from "../reducers/filterReducer";
 import Filter from "./filterVisibility";
+import { initializeAnecdotes } from "../reducers/anecdoteReducer";
 
 const Anecdote = ({ anecdote, handleLike }) => {
   return (
@@ -18,8 +20,13 @@ const Anecdote = ({ anecdote, handleLike }) => {
 
 const AnecdoteList = () => {
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(initializeAnecdotes());
+  }, [dispatch]);
   const anecdotes = useSelector((state) => state.anecdotes);
+
   console.log(anecdotes);
+
   const filter = useSelector((state) => state.filters);
 
   return (
@@ -35,11 +42,10 @@ const AnecdoteList = () => {
             key={anecdote.id}
             anecdote={anecdote}
             handleLike={() => {
-              dispatch(like(anecdote.id));
-              dispatch(setNotification(`you voted for '${anecdote.content}'`));
-              setTimeout(() => {
-                dispatch(setNotification(""));
-              }, 5000);
+              dispatch(like(anecdote));
+              dispatch(
+                setNotification(`you voted for '${anecdote.content}'`, 10)
+              );
             }}
           />
         ))}

@@ -2,7 +2,6 @@ import AnecdoteList from "./components/AnecdoteList";
 import AnecdoteForm from "./components/AnecdoteForm";
 import Notification from "./components/Notification";
 
-export let inputValue;
 const App = () => {
   return (
     <div>
