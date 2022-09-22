@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { like } from "../reducers/anecdoteReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import { filters } from "../reducers/filterReducer";
 import Filter from "./filterVisibility";
 import { initializeAnecdotes } from "../reducers/anecdoteReducer";
+import { connect } from "react-redux";
 
 const Anecdote = ({ anecdote, handleLike }) => {
   return (
@@ -18,16 +19,17 @@ const Anecdote = ({ anecdote, handleLike }) => {
   );
 };
 
-const AnecdoteList = () => {
+const AnecdoteList = (props) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(initializeAnecdotes());
   }, [dispatch]);
-  const anecdotes = useSelector((state) => state.anecdotes);
+
+  const anecdotes = props.anecdotes;
 
   console.log(anecdotes);
 
-  const filter = useSelector((state) => state.filters);
+  const filter = props.filter;
 
   return (
     <div>
@@ -42,10 +44,8 @@ const AnecdoteList = () => {
             key={anecdote.id}
             anecdote={anecdote}
             handleLike={() => {
-              dispatch(like(anecdote));
-              dispatch(
-                setNotification(`you voted for '${anecdote.content}'`, 10)
-              );
+              props.like(anecdote);
+              props.setNotification(`you voted for '${anecdote.content}'`, 5);
             }}
           />
         ))}
@@ -53,4 +53,20 @@ const AnecdoteList = () => {
   );
 };
 
-export default AnecdoteList;
+const mapStateToProps = (state) => {
+  return {
+    anecdotes: state.anecdotes,
+    filter: state.filters,
+  };
+};
+
+const mapDispatchToProps = {
+  like,
+  setNotification,
+};
+
+const ConnectedNotes = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AnecdoteList);
+export default ConnectedNotes;
