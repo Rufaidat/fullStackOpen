@@ -1,7 +1,6 @@
 {
   "name": "fullstackopenblog",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
@@ -27,5 +26,9 @@
   },
   "jest": {
     "testEnvironment": "node"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "description": ""
 }
