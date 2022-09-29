@@ -19,38 +19,20 @@ const useResource = (baseUrl) => {
   const [resources, setResources] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(baseUrl)
-      .then((response) => setResources(response.data))
-      .catch((error) => console.log(error));
-  });
-
-  let token = null;
-
-  const setToken = (newToken) => {
-    token = `bearer ${newToken}`;
-  };
-
-  const getAll = async () => {
-    const response = await axios.get(baseUrl);
-    return response.data;
-  };
+    axios.get(baseUrl).then((response) => {
+      setResources(response.data);
+    });
+  }, []);
 
   const create = async (newObject) => {
-    const config = {
-      headers: { Authorization: token },
-    };
-
-    const response = await axios.post(baseUrl, newObject, config);
-    return response.data;
+    const response = await axios.post(baseUrl, newObject);
+    setResources(resources.concat(response.data));
   };
 
-  const update = async (id, newObject) => {
-    const response = await axios.put(`${baseUrl}/${id}`, newObject);
-    return response.data;
+  const service = {
+    create,
   };
 
-  const service = { create, update, getAll, setToken };
   return [resources, service];
 };
 
@@ -79,7 +61,7 @@ const App = () => {
         <input {...content} />
         <button>create</button>
       </form>
-      {notes.map((n) => (
+      {[...notes].map((n) => (
         <p key={n.id}>{n.content}</p>
       ))}
 
@@ -89,7 +71,7 @@ const App = () => {
         number <input {...number} />
         <button>create</button>
       </form>
-      {persons.map((n) => (
+      {[...persons].map((n) => (
         <p key={n.id}>
           {n.name} {n.number}
         </p>

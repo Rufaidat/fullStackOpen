@@ -1,26 +1,25 @@
 import { useState, useEffect, useRef } from "react";
-import Blog from "./components/Blog";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
-import Notification from "./components/Notification";
-import Success from "./components/successMessage";
-import BlogForm from "./components/BlogForm";
-import Togglable from "./components/Togglable";
+import Blog from "../components/Blog";
+import blogService from "../services/blogs";
+import loginService from "../services/login";
+import Notification from "../components/Notification";
+import Success from "../components/successMessage";
+import BlogForm from "../components/BlogForm";
+import Togglable from "../components/Togglable";
+import { useDispatch, useSelector } from "react-redux";
+import { appendBlogs, like, setBlogs } from "../reducers/blogReducer";
+import { setNotification } from "../reducers/notificationReducer";
 
-const App = () => {
-  const [blogs, setBlogs] = useState([]);
+const BlogList = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  //   const [errorMessage, setErrorMessage] = useState(null);
+  //   const [successMessage, setSuccessMessage] = useState(null);
   const blogFormRef = useRef();
 
-  useEffect(() => {
-    blogService.getAll().then((initialNotes) => {
-      setBlogs(initialNotes);
-    });
-  }, []);
+  const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -44,10 +43,10 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("wrong username or password");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      //   setErrorMessage("wrong username or password");
+      //   setTimeout(() => {
+      //     setErrorMessage(null);
+      //   }, 5000);
     }
   };
 
@@ -59,21 +58,25 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog));
-      setSuccessMessage(
-        `a new blog "${blogObject.title}" ${blogObject.author} added`
+      dispatch(appendBlogs(returnedBlog));
+      dispatch(
+        setNotification(
+          `a new blog "${blogObject.title}" ${blogObject.author} added`
+        ),
+        5
       );
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
+      //   setSuccessMessage(
+      //     `a new blog "${blogObject.title}" ${blogObject.author} added`
+      //   );
+      //   setTimeout(() => {
+      //     setSuccessMessage(null);
+      //   }, 5000);
     });
   };
 
   const increaseLike = (blogObject) => {
     blogService.update(blogObject.id, blogObject).then((returnedBlog) => {
-      setBlogs(
-        blogs.map((elem) => (elem.id === returnedBlog.id ? returnedBlog : elem))
-      );
+      dispatch(like(blogObject));
       console.log(returnedBlog);
     });
   };
@@ -82,7 +85,7 @@ const App = () => {
     if (
       window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)
     ) {
-      setBlogs(blogs.filter((elem) => blogObject.id !== elem.id));
+      dispatch(setBlogs(blogs.filter((elem) => blogObject.id !== elem.id)));
       blogService.remove(blogObject.id);
     }
   };
@@ -116,15 +119,15 @@ const App = () => {
       {user === null ? (
         <div>
           <h2>log in to application</h2>
-          <Notification error={errorMessage} />
-          <Success success={successMessage} />
+          <Notification />
+          <Success />
           {loginForm()}
         </div>
       ) : (
         <div>
           <h2>blogs</h2>
-          <Notification error={errorMessage} />
-          <Success success={successMessage} />
+          <Notification />
+          <Success />
           <p>{user.name} logged in</p>{" "}
           <button type="submit" onClick={handleLogout}>
             log out
@@ -149,4 +152,4 @@ const App = () => {
     </div>
   );
 };
-export default App;
+export default BlogList;

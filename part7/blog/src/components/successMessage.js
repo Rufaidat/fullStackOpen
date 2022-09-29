@@ -1,5 +1,5 @@
 const Success = ({ success }) => {
-  if (success === null) {
+  if (!success) {
     return null;
   }
   return <div className="success">{success}</div>;
