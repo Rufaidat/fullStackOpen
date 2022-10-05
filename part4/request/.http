@@ -16,9 +16,9 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "username": "R",
+    "username": "Rayyaan",
     "name": "Rayyaan Yakub",
-    "password": "Q"
+    "password": "obom"
 }
 ###
 POST http://localhost:3003/api/blogs
@@ -48,11 +48,12 @@ Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlFpeWFtYXQiLCJpZCI6IjYzMTQ2MTgxMWQxNTUwNmM2MGFmYzk5ZCIsImlhdCI6MTY2MjI4NTk0NX0.Zr7UrrpLExpotnWCmR8oIToiAPt7mZ7-af_6jYQm_dQ
 
 {
-    "title": "Canonical string reduction",
+    "title": "2 again working on adding comments",
     "author": "Edsger W. Dijkstra",
     "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
     "likes": 12,
-    "userId": "631459fc287274b6ef4ea6ff"
+    "userId": "631459fc287274b6ef4ea6ff",
+    "comments":["just read it"]
 }
 
 ###
@@ -68,4 +69,5 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlFpe
 "likes":5,
     "userId": "631459fc287274b6ef4ea6ff"
 }
-
+###
+GET http://localhost:3003/api/users

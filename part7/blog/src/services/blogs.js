@@ -32,5 +32,9 @@ const remove = async (id) => {
 };
 
 const blogService = { getAll, create, setToken, update, remove };
+export const getAllUsers = async () => {
+  const request = axios.get("/api/users");
+  return request.then((response) => response.data);
+};
 
 export default blogService;

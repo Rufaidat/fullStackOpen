@@ -1,63 +1,77 @@
-import { useState } from "react";
+import { Button } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { like, setBlogs } from "../reducers/blogReducer";
+import blogService from "../services/blogs";
 
-const Blog = ({ blog, handleLike, handleRemove }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    paddingBottom: 10,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
-  const button = {
-    margin: 5,
-    borderRadius: 5,
-    border: "1rem",
-    padding: 5,
-  };
-
-  const [visible, setVisible] = useState(false);
-  const brief = () => (
-    <div className="briefContent">
-      {blog.title} {blog.author}
-      <button onClick={() => setVisible(true)} style={button} className="view">
-        view
-      </button>
-    </div>
-  );
+const Blog = () => {
+  const dispatch = useDispatch();
+  const blog = useSelector((state) => state.blogs);
+  console.log(blog);
+  console.log(blog);
+  const id = useParams().id;
+  console.log(id);
+  const blogs = blog.find((n) => n.id === id);
 
   const increaseLike = (event) => {
     event.preventDefault();
-    handleLike({ ...blog, likes: blog.likes + 1 });
-    console.log({ ...blog, likes: blog.likes + 1 });
+    const blogUpdate = { ...blogs, likes: blogs.likes + 1 };
+    console.log({ ...blogs, likes: blogs.likes + 1 });
+    blogService.update(blogUpdate.id, blogUpdate).then((returnedBlog) => {
+      dispatch(like(blogUpdate));
+      console.log(returnedBlog);
+    });
   };
 
-  const removeBlog = (event) => {
+  const addComment = async (event) => {
     event.preventDefault();
-
-    handleRemove(blog);
+    const blogUpdate = {
+      ...blogs,
+      comments: blogs.comments.concat(event.target.comment.value),
+    };
+    console.log(blogUpdate);
+    await blogService.update(blogUpdate.id, blogUpdate);
+    const newBlog = await blogService.getAll();
+    console.log(newBlog);
+    dispatch(setBlogs(newBlog));
   };
 
-  const details = () => (
-    <div className="detailContent">
-      {blog.title} {blog.author}
-      <button onClick={() => setVisible(false)} style={button}>
-        hide
-      </button>
-      <p>{blog.url}</p>
-      like {blog.likes}{" "}
-      <button style={button} onClick={increaseLike}>
-        like
-      </button>
-      <p>{blog.user.name}</p>
-      <button onClick={removeBlog}>remove</button>
-    </div>
-  );
-
+  // const remove = (blog) => {
+  //   return async (dispatch) => {
+  //     await blogService.remove(blog.id);
+  //     const blogs = await blogService.getAll();
+  //     dispatch(setBlogs(newBlog));
+  //   };
+  // };
   return (
-    <div style={blogStyle} className="blog">
-      {!visible === true ? brief() : details()}
+    <div className="blog">
+      {!blogs ? null : (
+        <div>
+          <h2>
+            {blogs.title} {blogs.author}
+          </h2>
+          <div>
+            <Link>{blogs.url}</Link>
+          </div>
+          like {blogs.likes}{" "}
+          <Button variant="outlined" color="primary" onClick={increaseLike}>
+            like
+          </Button>
+          <p>added by {blogs.user.name}</p>
+          <h2>comments</h2>
+          {blogs.comments.map((comment) => {
+            <li key={Math.floor(Math.random() * 10000)}>{comment}</li>;
+          })}
+          <div className="formDiv">
+            <form onSubmit={addComment}>
+              <input id="comment" name="comment" />
+              <br />
+              <button type="submit">add comment</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

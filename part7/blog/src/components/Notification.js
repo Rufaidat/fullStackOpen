@@ -7,7 +7,7 @@ const Notification = () => {
     return null;
   }
 
-  return <div className="error">{error}</div>;
+  return <div className="error">{error} title</div>;
 };
 
 export default Notification;

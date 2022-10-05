@@ -1,48 +1,39 @@
-import { useState } from "react";
-
-const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
-
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
-
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value);
-  };
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value);
-  };
-
+// import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { createBlog } from "../reducers/blogReducer";
+import { TextField, Button } from "@mui/material";
+const BlogForm = (props) => {
+  const dispatch = useDispatch();
   const addBlog = (event) => {
     event.preventDefault();
-    createBlog({
-      title: title,
-      author: author,
-      url: url,
-    });
-
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    const newBlog = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value,
+      likes: 0,
+      comments: [],
+    };
+    dispatch(createBlog(newBlog));
   };
 
   return (
     <div className="formDiv">
       <h2>create new</h2>
       <form onSubmit={addBlog}>
-        title: <input value={title} onChange={handleTitleChange} id="title" />
+        <TextField label="title" id="title" name="title" />
         <br />
-        author:{" "}
-        <input value={author} onChange={handleAuthorChange} id="author" />
         <br />
-        url:
-        <input value={url} onChange={handleUrlChange} id="url" />
+        <TextField label="author" id="author" name="author" />
         <br />
-        <button type="submit">create</button>
+        <br />
+        <TextField label="url" id="url" name="url" />
+        <br />
+        <br />
+        <Button type="submit" variant="contained" color="primary">
+          create
+        </Button>
+        <br />
+        <br />
       </form>
     </div>
   );

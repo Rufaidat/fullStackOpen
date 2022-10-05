@@ -1,172 +1,89 @@
-// import { useState, useEffect, useRef } from "react";
-// import Blog from "./components/Blog";
-// import blogService from "./services/blogs";
-// import loginService from "./services/login";
-// import Notification from "./components/Notification";
-// import Success from "./components/successMessage";
-// import BlogForm from "./components/BlogForm";
-// import Togglable from "./components/Togglable";
-
-// const App = () => {
-//   const [blogs, setBlogs] = useState([]);
-//   const [username, setUsername] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [user, setUser] = useState(null);
-//   const [errorMessage, setErrorMessage] = useState(null);
-//   const [successMessage, setSuccessMessage] = useState(null);
-//   const blogFormRef = useRef();
-
-//   useEffect(() => {
-//     blogService.getAll().then((initialNotes) => {
-//       setBlogs(initialNotes);
-//     });
-//   }, []);
-
-//   useEffect(() => {
-//     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-//     if (loggedUserJSON) {
-//       const user = JSON.parse(loggedUserJSON);
-//       setUser(user);
-//       blogService.setToken(user.token);
-//     }
-//   }, []);
-
-//   const handleLogin = async (event) => {
-//     event.preventDefault();
-//     try {
-//       const user = await loginService.login({
-//         username,
-//         password,
-//       });
-//       setUser(user);
-//       blogService.setToken(user.token);
-//       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-//       setUsername("");
-//       setPassword("");
-//     } catch (exception) {
-//       setErrorMessage("wrong username or password");
-//       setTimeout(() => {
-//         setErrorMessage(null);
-//       }, 5000);
-//     }
-//   };
-
-//   const handleLogout = () => {
-//     window.localStorage.removeItem("loggedBlogappUser");
-//     setUser(null);
-//   };
-
-//   const addBlog = (blogObject) => {
-//     blogFormRef.current.toggleVisibility();
-//     blogService.create(blogObject).then((returnedBlog) => {
-//       setBlogs(blogs.concat(returnedBlog));
-//       setSuccessMessage(
-//         `a new blog "${blogObject.title}" ${blogObject.author} added`
-//       );
-//       setTimeout(() => {
-//         setSuccessMessage(null);
-//       }, 5000);
-//     });
-//   };
-
-//   const increaseLike = (blogObject) => {
-//     blogService.update(blogObject.id, blogObject).then((returnedBlog) => {
-//       setBlogs(
-//         blogs.map((elem) => (elem.id === returnedBlog.id ? returnedBlog : elem))
-//       );
-//       console.log(returnedBlog);
-//     });
-//   };
-
-//   const removeBlog = (blogObject) => {
-//     if (
-//       window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)
-//     ) {
-//       setBlogs(blogs.filter((elem) => blogObject.id !== elem.id));
-//       blogService.remove(blogObject.id);
-//     }
-//   };
-
-//   const loginForm = () => (
-//     <form onSubmit={handleLogin}>
-//       <div>
-//         username
-//         <input
-//           type="text"
-//           value={username}
-//           name="Username"
-//           onChange={({ target }) => setUsername(target.value)}
-//         />
-//       </div>
-//       <div>
-//         password
-//         <input
-//           type="password"
-//           value={password}
-//           name="Password"
-//           onChange={({ target }) => setPassword(target.value)}
-//         />
-//       </div>
-//       <button type="submit">login</button>
-//     </form>
-//   );
-
-//   return (
-//     <div>
-//       {user === null ? (
-//         <div>
-//           <h2>log in to application</h2>
-//           <Notification error={errorMessage} />
-//           <Success success={successMessage} />
-//           {loginForm()}
-//         </div>
-//       ) : (
-//         <div>
-//           <h2>blogs</h2>
-//           <Notification error={errorMessage} />
-//           <Success success={successMessage} />
-//           <p>{user.name} logged in</p>{" "}
-//           <button type="submit" onClick={handleLogout}>
-//             log out
-//           </button>
-//           <Togglable buttonLabel="new blog" ref={blogFormRef}>
-//             <BlogForm createBlog={addBlog} />
-//           </Togglable>
-//           {[...blogs]
-//             .sort((a, b) => {
-//               return b.likes - a.likes;
-//             })
-//             .map((blog) => (
-//               <Blog
-//                 key={blog.id}
-//                 blog={blog}
-//                 handleLike={increaseLike}
-//                 handleRemove={removeBlog}
-//               />
-//             ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-// export default App;
-
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import { useEffect } from "react";
 import BlogList from "./components/blogList";
-// import VisibilityFilter from './components/VisibilityFilter'
+import Notification from "./components/Notification";
+import Success from "./components/successMessage";
+import User from "./components/User";
+import { AppBar, Toolbar, Button } from "@mui/material";
+import { useSelector } from "react-redux";
 import { initializeBlogs } from "./reducers/blogReducer";
 import { useDispatch } from "react-redux";
-
+import { Container } from "@mui/material";
+import { removeUser } from "./reducers/usersReducer";
+import Blog from "./components/Blog";
+import { like } from "./reducers/blogReducer";
+import { initializeUsers } from "./reducers/userListReducer";
+import UserBlogs from "./components/UserBlogs";
 const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(initializeBlogs());
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(initializeUsers());
+  }, [dispatch]);
+
+  const user = useSelector((state) => state.user);
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedBlogappUser");
+    dispatch(removeUser());
+  };
+
   return (
-    <div>
-      <BlogList />
-    </div>
+    <Container>
+      {" "}
+      <Router>
+        {/* <Link to="/">blogs</Link>
+        <Link to="/users">users</Link> */}
+        {user === null ? null : (
+          <AppBar position="static">
+            <Toolbar>
+              <Button color="inherit" component={Link} to="/">
+                blogs
+              </Button>
+              <Button color="inherit" component={Link} to="/users">
+                users
+              </Button>
+              <p>{user.name} logged in</p>
+              {/* {user === null ? null : <p>{user.name} logged in</p>} */}
+              {/* <p>{user.name} logged in</p>
+              {user === null ? null : (
+                <Button onClick={handleLogout} component={Link} color="inherit">
+                  log out
+                </Button>
+              )} */}
+              <Button onClick={handleLogout} component={Link} color="inherit">
+                log out
+              </Button>
+            </Toolbar>
+          </AppBar>
+        )}
+
+        <div>
+          <Notification />
+          <Success />
+        </div>
+        <Routes>
+          <Route
+            path="/blogs/:id"
+            element={<Blog blog={useSelector((state) => state.blogs)} />}
+          />
+          <Route path="/users/:id" element={<UserBlogs />} />
+          <Route path="/" element={<BlogList />} />
+          <Route
+            path="/users"
+            element={user === null ? <Navigate replace to="/" /> : <User />}
+          />
+        </Routes>
+      </Router>
+    </Container>
   );
 };
 

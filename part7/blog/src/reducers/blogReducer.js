@@ -35,6 +35,7 @@ export const createBlog = (content) => {
   return async (dispatch) => {
     const newBlog = await blogService.create(content);
     dispatch(appendBlogs(newBlog));
+    console.log(newBlog);
   };
 };
 
@@ -43,7 +44,7 @@ export const like = (blog) => {
   return async (dispatch) => {
     const newBlog = await blogService.update(blog.id, changedBlog);
 
-    console.log(newBlog);
+    // console.log(newBlog);
 
     dispatch(setLike(newBlog));
   };
