@@ -5,15 +5,11 @@ import {
   TableContainer,
   Paper,
   Table,
-  Button,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { removeUser } from "../reducers/usersReducer";
+import { useSelector } from "react-redux";
 
 const User = () => {
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const usersList = useSelector((state) => state.users);
   console.log(usersList);

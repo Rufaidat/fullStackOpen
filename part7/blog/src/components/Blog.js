@@ -1,9 +1,10 @@
-import { Button } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { like, setBlogs } from "../reducers/blogReducer";
+import { like } from "../reducers/blogReducer";
 import blogService from "../services/blogs";
+import { TextField, Button } from "@mui/material";
+import { setSuccessMessage } from "../reducers/sucessReducer";
 
 const Blog = () => {
   const dispatch = useDispatch();
@@ -20,54 +21,62 @@ const Blog = () => {
     console.log({ ...blogs, likes: blogs.likes + 1 });
     blogService.update(blogUpdate.id, blogUpdate).then((returnedBlog) => {
       dispatch(like(blogUpdate));
+      console.log(blogUpdate.title);
+      dispatch(setSuccessMessage(`You voted for ${blogUpdate.title}`, 10));
       console.log(returnedBlog);
     });
   };
 
-  const addComment = async (event) => {
+  const addComment = (event) => {
     event.preventDefault();
+    const newComment = event.target.comment.value;
     const blogUpdate = {
       ...blogs,
-      comments: blogs.comments.concat(event.target.comment.value),
+      comments: blogs.comments.concat(newComment),
     };
-    console.log(blogUpdate);
-    await blogService.update(blogUpdate.id, blogUpdate);
-    const newBlog = await blogService.getAll();
-    console.log(newBlog);
-    dispatch(setBlogs(newBlog));
+    console.log({ ...blogs, comments: blogs.comments.concat(newComment) });
+    blogService.update(blogUpdate.id, blogUpdate).then((returnedBlog) => {
+      dispatch(like(blogUpdate));
+      console.log(returnedBlog);
+    });
   };
 
-  // const remove = (blog) => {
-  //   return async (dispatch) => {
-  //     await blogService.remove(blog.id);
-  //     const blogs = await blogService.getAll();
-  //     dispatch(setBlogs(newBlog));
-  //   };
-  // };
   return (
     <div className="blog">
       {!blogs ? null : (
         <div>
           <h2>
-            {blogs.title} {blogs.author}
+            {blogs.title} by {blogs.author}
           </h2>
           <div>
             <Link>{blogs.url}</Link>
           </div>
-          like {blogs.likes}{" "}
-          <Button variant="outlined" color="primary" onClick={increaseLike}>
-            like
-          </Button>
-          <p>added by {blogs.user.name}</p>
+          <div style={{ marginTop: "1rem" }}>
+            like {blogs.likes}{" "}
+            <Button variant="outlined" color="primary" onClick={increaseLike}>
+              like
+            </Button>
+          </div>
+          <p>
+            Added by{" "}
+            <strong>
+              <em>{blogs.user.name}</em>
+            </strong>
+          </p>
           <h2>comments</h2>
           {blogs.comments.map((comment) => {
             <li key={Math.floor(Math.random() * 10000)}>{comment}</li>;
           })}
           <div className="formDiv">
             <form onSubmit={addComment}>
-              <input id="comment" name="comment" />
+              <TextField label="comment" id="comment" name="comment" />
               <br />
-              <button type="submit">add comment</button>
+              <br />
+              <Button type="submit" variant="contained" color="primary">
+                Add comment
+              </Button>
+              <br />
+              <br />
             </form>
           </div>
         </div>

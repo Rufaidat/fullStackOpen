@@ -1,23 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-import Blog from "../components/Blog";
 import blogService from "../services/blogs";
 import loginService from "../services/login";
-import Notification from "../components/Notification";
-import Success from "../components/successMessage";
 import BlogForm from "../components/BlogForm";
 import Togglable from "../components/Togglable";
 import { useDispatch, useSelector } from "react-redux";
-import { like, setBlogs } from "../reducers/blogReducer";
-import { setNotification } from "../reducers/notificationReducer";
+import { seterrorMessage } from "../reducers/errorReducer";
+import { setSuccessMessage } from "../reducers/sucessReducer";
 import { setUser } from "../reducers/usersReducer";
 import { TextField, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const BlogList = () => {
   const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    paddingBottom: 10,
+    padding: "0 2rem",
     border: "solid",
     borderWidth: 1,
     marginBottom: 5,
@@ -28,9 +23,6 @@ const BlogList = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const user = useSelector((state) => state.user);
-  // const [user, setUser] = useState(null);
-  //   const [errorMessage, setErrorMessage] = useState(null);
-  //   const [successMessage, setSuccessMessage] = useState(null);
   const blogFormRef = useRef();
 
   const blogs = useSelector((state) => state.blogs);
@@ -39,7 +31,6 @@ const BlogList = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      // setUser(user);
       dispatch(setUser(user));
       blogService.setToken(user.token);
     }
@@ -52,34 +43,20 @@ const BlogList = () => {
         username,
         password,
       });
-      // setUser(user);
       dispatch(setUser(user));
       blogService.setToken(user.token);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       setUsername("");
       setPassword("");
+      dispatch(setSuccessMessage(`welcome ${user.username}`, 10));
     } catch (exception) {
-      //   setErrorMessage("wrong username or password");
-      //   setTimeout(() => {
-      //     setErrorMessage(null);
-      //   }, 5000);
+      dispatch(seterrorMessage(`wrong username or password`, 10));
     }
   };
-
-  // const removeBlog = (blogObject) => {
-  //   if (
-  //     window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)
-  //   ) {
-  //     dispatch(setBlogs(blogs.filter((elem) => blogObject.id !== elem.id)));
-  //     blogService.remove(blogObject.id);
-  //   }
-  // };
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
-        {/* <TextField label="username" /> */}
-
         <TextField
           type="text"
           label="username"
@@ -114,16 +91,14 @@ const BlogList = () => {
       {user === null ? (
         <div>
           <h2>log in to application</h2>
-          <Notification />
-          <Success />
+
           {loginForm()}
         </div>
       ) : (
         <div>
           <h2>Blog App</h2>
-          <Notification />
-          <Success />
-          <Togglable buttonLabel="Create new" ref={blogFormRef}>
+
+          <Togglable buttonLabel="Create new blog" ref={blogFormRef}>
             <BlogForm />
           </Togglable>
           {[...blogs]
@@ -132,8 +107,14 @@ const BlogList = () => {
             })
             .map((blog) => (
               <div key={blog.id} style={blogStyle} className="blog">
-                <Link to={`/blogs/${blog.id}`}>
-                  {blog.title} {blog.author}
+                <Link
+                  to={`/blogs/${blog.id}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <p>
+                    {" "}
+                    {blog.title} <strong>{blog.author}</strong>
+                  </p>
                 </Link>
               </div>
             ))}

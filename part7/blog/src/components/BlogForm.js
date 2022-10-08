@@ -1,11 +1,13 @@
-// import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createBlog } from "../reducers/blogReducer";
 import { TextField, Button } from "@mui/material";
-const BlogForm = (props) => {
+import { formVisibility } from "../reducers/blogFormReducer";
+import { setSuccessMessage } from "../reducers/sucessReducer";
+const BlogForm = () => {
   const dispatch = useDispatch();
   const addBlog = (event) => {
     event.preventDefault();
+    dispatch(formVisibility(false));
     const newBlog = {
       title: event.target.title.value,
       author: event.target.author.value,
@@ -14,6 +16,9 @@ const BlogForm = (props) => {
       comments: [],
     };
     dispatch(createBlog(newBlog));
+    dispatch(
+      setSuccessMessage(`You added ${newBlog.title} by ${newBlog.author}`, 10)
+    );
   };
 
   return (

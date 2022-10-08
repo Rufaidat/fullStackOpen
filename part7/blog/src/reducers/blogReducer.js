@@ -43,9 +43,14 @@ export const like = (blog) => {
   const changedBlog = { ...blog, votes: blog.votes + 1 };
   return async (dispatch) => {
     const newBlog = await blogService.update(blog.id, changedBlog);
+    dispatch(setLike(newBlog));
+  };
+};
 
-    // console.log(newBlog);
-
+export const comment = (blog) => {
+  const changedBlog = { ...blog, votes: blog.votes + 1 };
+  return async (dispatch) => {
+    const newBlog = await blogService.update(blog.id, changedBlog);
     dispatch(setLike(newBlog));
   };
 };

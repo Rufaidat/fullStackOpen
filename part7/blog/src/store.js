@@ -1,18 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import blogReducer from "./reducers/blogReducer";
-import notificationReducer from "./reducers/notificationReducer";
+import errorMessageReducer from "./reducers/errorReducer";
 import userListReducer from "./reducers/userListReducer";
 import usersReducer from "./reducers/usersReducer";
-// import notificationReducer from "./reducers/notificationReducer";
+import blogFormReducer from "./reducers/blogFormReducer";
+import successMessageReducer from "./reducers/sucessReducer";
 
 export const store = configureStore({
   reducer: {
     blogs: blogReducer,
-    notifications: notificationReducer,
+    error: errorMessageReducer,
     user: usersReducer,
     users: userListReducer,
-    // notifications: notificationReducer,
-    // filters: filterReducer,
+    formVisibility: blogFormReducer,
+    success: successMessageReducer,
   },
 });
 

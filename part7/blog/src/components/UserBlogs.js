@@ -5,7 +5,7 @@ const UserBlogs = () => {
   const users = useSelector((state) => state.users);
   const id = useParams().id;
   console.log(id);
-  const userMatch = users.find((n) => n.id == id);
+  const userMatch = users.find((n) => n.id === id);
   if (!user) {
     return null;
   }

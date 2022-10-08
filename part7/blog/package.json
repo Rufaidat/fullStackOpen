@@ -26,7 +26,7 @@
     "server": "json-server -p3003 --watch db.json",
     "cypress:open": "cypress open",
     "eslint": "eslint .",
-    "build:ui": "rm -rf build && cd ../blog_frontend/ && npm run build && xcopy /S/I/E build C:/Users/user/Desktop/fullStackOpenBlog",
+    "build:ui": "rm -rf build && cd ../blog_frontend/ && npm run build && xcopy /S/I/E build user@DESKTOP-H047O37 MINGW64 ~/Desktop/fullStackOpenBlog",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy"
   },

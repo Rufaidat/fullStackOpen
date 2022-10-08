@@ -1,12 +1,22 @@
 import { useSelector } from "react-redux";
+import { Alert, AlertTitle } from "@mui/material";
 
 const Success = () => {
-  const success = useSelector((state) => state.notifications);
-  if (success === "") {
+  const message = useSelector((state) => state.success);
+  if (message === "") {
     return null;
   }
-  console.log(success);
-  return <div className="success">{success}</div>;
+  console.log(message);
+  return (
+    <div style={{ margin: "1rem 0" }}>
+      {message && (
+        <Alert severity="success">
+          <AlertTitle>Success</AlertTitle>
+          {message}
+        </Alert>
+      )}
+    </div>
+  );
 };
 
 export default Success;
