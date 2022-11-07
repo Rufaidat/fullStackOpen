@@ -7,7 +7,8 @@ import SingleCountry from "./components/singleCountries";
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
-  console.log(countries);
+  const [weather, setWeather] = useState({});
+
   //fetch data from db.json
   const hook = () => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
@@ -33,7 +34,7 @@ const App = () => {
         {toShow.length > 10 ? (
           "Too many searches, specify another filter"
         ) : toShow.length === 1 ? (
-          <SingleCountry countries={toShow[0]} />
+          <SingleCountry countries={toShow[0]} weather={weather} />
         ) : (
           toShow.map((country, index) => (
             <Countries key={index} countries={country} />

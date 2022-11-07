@@ -54,7 +54,6 @@ const App = () => {
         }, 5000);
       });
     } else {
-      console.log(checkName);
       if (
         //if name exist ask the user to update or not
         window.confirm(
@@ -65,7 +64,6 @@ const App = () => {
         phoneService
           .update(checkName.id, newPerson)
           .then((response) => {
-            console.log(response);
             setPersons(
               persons.map((person) => {
                 if (
