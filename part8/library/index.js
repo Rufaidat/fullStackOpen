@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require("apollo-server");
+const { argsToArgsConfig } = require("graphql/type/definition");
 
 let authors = [
   {
@@ -93,22 +94,25 @@ let books = [
 ];
 
 const typeDefs = gql`
-  type Author {
-    name: String!
-    id: String!
-    born: Int
-  }
   type Book {
     title: String!
     published: Int!
     author: String!
     id: ID!
+    genres: [String!]!
+  }
+  type Author {
+    name: String!
+    id: String!
+    born: Int
+    books: [String!]!
+    bookCount: Int!
   }
   type Query {
-    bookCount: Int!
     authorCount: Int!
-    allBooks: [Book!]!
-    allPersons: [Author!]!
+    bookCount: Int!
+    allBooks(author: String): [Book!]!
+    allAuthors(name: String, id: Int): [Author!]!
   }
 `;
 
@@ -116,8 +120,33 @@ const resolvers = {
   Query: {
     authorCount: () => authors.length,
     bookCount: () => books.length,
-    allBooks: () => books,
-    allAuthors: () => authors,
+    allBooks: (_, arg) => {
+      if (!arg.author) return books;
+      let result = books;
+      if (arg.author)
+        result = books
+          .filter((book) => book.author === arg.author)
+          .map((book) => ({ title: book.title }));
+
+      if (arg.genre)
+        result = result
+          .filter((book) => book.genre === arg.genre)
+          .map((book) => ({ title: book.title }));
+
+      if (arg.author && arg.genre) {
+        result = result.map((res) => ({ ...res, author: arg.author }));
+      }
+
+      return result;
+    },
+    allAuthors: () =>
+      authors.map((author) => {
+        author.bookCount = books.filter(
+          (book) => book.author === author.name
+        ).length;
+
+        return author;
+      }),
   },
 };
 

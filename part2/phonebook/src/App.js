@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import Persons from "./components/persons";
-import Filter from "./components/filter";
-import PersonForm from "./components/form";
+import Persons from "./components/Persons";
+import Filter from "./components/Filter";
+import PersonForm from "./components/Form";
 import phoneService from "./services/phone";
-import Notification from "./components/notification";
-import Success from "./components/successMessage";
+import Notification from "./components/Notification";
+import Success from "./components/SuccessMessage";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -47,6 +47,7 @@ const App = () => {
         setPersons(persons.concat(returnedPerson));
         setNewName("");
         setNewNumber("");
+        // send a success message if send is successful
         setSuccessMessage(`added ${newPerson.name} successfully`);
         setTimeout(() => {
           setSuccessMessage(null);
@@ -118,8 +119,7 @@ const App = () => {
   const handleDelete = (id) => {
     const checkName = persons.find((person) => person.id === id);
     phoneService.remove(id).then((returnedPerson) => {
-      setPersons(returnedPerson);
-      persons.filter((person) => person.id !== id);
+      setPersons(persons.filter((person) => person.id !== id));
       setSuccessMessage(`${checkName.name} removed successfully`);
       setTimeout(() => {
         setSuccessMessage(null);

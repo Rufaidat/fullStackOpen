@@ -7,7 +7,7 @@ import SingleCountry from "./components/singleCountries";
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
-
+  console.log(countries);
   //fetch data from db.json
   const hook = () => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
@@ -22,16 +22,18 @@ const App = () => {
   };
 
   // check if countries name include the fiter input value
-  const toShow = countries.filter((elem) => elem.name.common.includes(filter));
+  const toShow = countries.filter((elem) =>
+    elem.name.common.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <div>
       <Filter onChange={handleFilterChange} />
       <div>
-        {toShow.length === 1 ? (
-          <SingleCountry countries={toShow[0]} />
-        ) : toShow.length > 10 ? (
+        {toShow.length > 10 ? (
           "Too many searches, specify another filter"
+        ) : toShow.length === 1 ? (
+          <SingleCountry countries={toShow[0]} />
         ) : (
           toShow.map((country, index) => (
             <Countries key={index} countries={country} />

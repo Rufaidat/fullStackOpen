@@ -16,8 +16,8 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "username": "Rayyaan",
-    "name": "Rayyaan Yakub",
+    "username": "Rays",
+    "name": "Rays",
     "password": "obom"
 }
 ###
@@ -95,5 +95,12 @@ Content-Type: application/json
 
 {
   "comment":"an interesting read",
+  "id":"6335d4e8cb550d0bc69ffcd2"
+}
+
+POST http://localhost:3003/api/comments
+Content-Type: application/json
+{
+     "comment":"an interesting read",
   "id":"6335d4e8cb550d0bc69ffcd2"
 }

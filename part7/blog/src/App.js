@@ -1,10 +1,3 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  Navigate,
-} from "react-router-dom";
 import { useEffect } from "react";
 import BlogList from "./components/blogList";
 import Success from "./components/successMessage";
@@ -19,6 +12,13 @@ import { removeUser } from "./reducers/usersReducer";
 import Blog from "./components/Blog";
 import { initializeUsers } from "./reducers/userListReducer";
 import UserBlogs from "./components/UserBlogs";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 
 const App = () => {
   const dispatch = useDispatch();
