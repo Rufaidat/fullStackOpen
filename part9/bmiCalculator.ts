@@ -13,16 +13,16 @@ const bmiChart = (num: number) => {
     return "Obese (Class I)";
   } else if (num <= 39.9) {
     return "Obese (Class II)";
-  } else if (num >= 40) {
+  } else {
     return "Obese (Class III)";
   }
 };
 
-const calculateBmi = (h: number, w: number) => {
+export const calculateBmi = (h: number, w: number) => {
   const bmi = (w / h / h) * 10000;
   return bmiChart(bmi);
 };
-const h: number = Number(process.argv[2]);
-const w: number = Number(process.argv[3]);
+// const h: number = Number(process.argv[2]);
+// const w: number = Number(process.argv[3]);
 
-console.log(calculateBmi(180, 74));
+// console.log(calculateBmi(180, 74));

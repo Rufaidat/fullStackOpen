@@ -5,7 +5,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 let morgan = require("morgan");
 const app = express();
-const Person = require("./models/persons");
+// const Person = require("./models/persons");
 
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms ")
@@ -65,11 +65,9 @@ app.post("/api/persons", (request, response, next) => {
 });
 
 app.get("/info", (request, response) => {
-  const date = new Date();
+  // const date = new Date();
 
-  // TODO: RETURN THE NUMBER OF PEOPLE IN THE DATABASE
-
-  // const person = `Phonebook has info for ${count} people
+  // const person = `Phonebook has info ${count} for people
   // ${date} `;
   // response.send(person);
 });

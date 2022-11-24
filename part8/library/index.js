@@ -1,5 +1,5 @@
 const { ApolloServer, gql } = require("apollo-server");
-const { argsToArgsConfig } = require("graphql/type/definition");
+const { v1: uuid } = require("uuid");
 
 let authors = [
   {
@@ -38,7 +38,7 @@ let authors = [
  *
  * Spanish:
  * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conección con el libro
+ * Sin embargso, por simplicidad, almacenaremos el nombre del autor en conección con el libro
  */
 
 let books = [
@@ -111,8 +111,17 @@ const typeDefs = gql`
   type Query {
     authorCount: Int!
     bookCount: Int!
-    allBooks(author: String): [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors(name: String, id: Int): [Author!]!
+  }
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
 
@@ -121,22 +130,20 @@ const resolvers = {
     authorCount: () => authors.length,
     bookCount: () => books.length,
     allBooks: (_, arg) => {
-      if (!arg.author) return books;
       let result = books;
-      if (arg.author)
-        result = books
-          .filter((book) => book.author === arg.author)
-          .map((book) => ({ title: book.title }));
-
-      if (arg.genre)
-        result = result
-          .filter((book) => book.genre === arg.genre)
-          .map((book) => ({ title: book.title }));
-
-      if (arg.author && arg.genre) {
-        result = result.map((res) => ({ ...res, author: arg.author }));
+      if (!arg) return result;
+      if (arg.author) {
+        result = books.filter((book) => book.author === arg.author);
       }
-
+      if (arg.genre) {
+        result = books.filter((book) => book.genres.includes(arg.genre));
+      }
+      if (arg.genre && arg.author) {
+        result = books.filter(
+          (book) =>
+            book.author === arg.author && book.genres.includes(arg.genre)
+        );
+      }
       return result;
     },
     allAuthors: () =>
@@ -144,9 +151,28 @@ const resolvers = {
         author.bookCount = books.filter(
           (book) => book.author === author.name
         ).length;
-
         return author;
       }),
+  },
+  Mutation: {
+    addBook: (_, args) => {
+      const book = { ...args, id: uuid() };
+      books = books.concat(book);
+      if (!authors.some((author) => author.name === { ...args }.author)) {
+        authors = authors.concat({ name: { ...args }.author });
+      }
+
+      return book;
+    },
+    editAuthor: (_, args) => {
+      const author = authors.find((auth) => auth.name === args.name);
+      if (!author) return null;
+      const updatedAuthor = { ...author, born: args.setBornTo };
+      authors = authors.map((auth) =>
+        auth.name === args.name ? updatedAuthor : auth
+      );
+      return updatedAuthor;
+    },
   },
 };
 

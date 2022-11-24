@@ -41,24 +41,36 @@ const App = () => {
         setErrorMessage(null);
       }, 5000);
     }
+    if (!/\d{2,3}-\d{6,}/.test(newNumber)) {
+      setErrorMessage(` ${newNumber} is not a valid number`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
     if (!checkName) {
       //add contact if it doesnt exist
-      phoneService.create(newPerson).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setNewName("");
-        setNewNumber("");
-        // send a success message if send is successful
-        setSuccessMessage(`added ${newPerson.name} successfully`);
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 5000);
-      });
+      phoneService
+        .create(newPerson)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName("");
+          setNewNumber("");
+          // send a success message if send is successful
+          setSuccessMessage(`added ${newPerson.name} successfully`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+        });
     } else {
       if (
         //if name exist ask the user to update or not
         window.confirm(
           `${newPerson.name} is already added to the phonebook,replace the old number with a new one`
-        )
+        ) &&
+        /\d{2,3}-\d{6,}/.test(newNumber)
       ) {
         //update if user asks to
         phoneService
@@ -74,6 +86,7 @@ const App = () => {
                 return person;
               })
             );
+
             //set a success message
             setSuccessMessage(` ${newPerson.name} updated successfully`);
             setTimeout(() => {
@@ -82,6 +95,7 @@ const App = () => {
           })
           .catch((error) => {
             //set an error message
+
             setErrorMessage(
               `information of ${newPerson.name} has already been removed from the server`
             );
