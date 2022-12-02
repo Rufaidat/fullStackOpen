@@ -1,10 +1,14 @@
 const { ApolloServer, gql, UserInputError } = require("apollo-server");
 const mongoose = require("mongoose");
+
+const User = require("./models/user");
 const Author = require("./models/author");
 const Book = require("./models/book");
 
-const MONGODB_URI =
-  "mongodb+srv://fullstackNotes:Rufaidat@cluster0.xsbzetz.mongodb.net/graphqlLibrary?retryWrites=true&w=majority";
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "NEED_HERE_A_SECRET_KEY";
+
+const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log("connecting to", MONGODB_URI);
 
@@ -32,11 +36,20 @@ const typeDefs = gql`
     books: [String!]!
     bookCount: Int!
   }
+  type User {
+    username: String!
+    favouriteGenre: String!
+    id: ID!
+  }
+  type Token {
+    value: String!
+  }
   type Query {
     authorCount: Int!
     bookCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors(name: String, id: Int): [Author!]!
+    me: User
   }
   type Mutation {
     addBook(
@@ -46,6 +59,8 @@ const typeDefs = gql`
       genres: [String!]!
     ): Book!
     editAuthor(name: String!, setBornTo: Int!): Author
+    createUser(username: String!, favouriteGenre: String!): User
+    login(username: String!, password: String!): Token
   }
 `;
 
@@ -54,7 +69,7 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
     bookCount: async () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
-      const result = await Book.find({});
+      let result = await Book.find({});
       if (!args) return result;
       if (args.author) {
         const author = await Author.findOne({ name: args.author });
@@ -79,22 +94,43 @@ const resolvers = {
         return author;
       });
     },
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
   },
   Mutation: {
     addBook: async (root, args) => {
-      let book = new Book({ ...args });
+      if (!currentUser) {
+        throw new AuthenticationError("Authentication Required");
+      }
+      const existingBook = await Book.findOne({ title: args.title });
 
-      const authorExists = await Author.find({ name: args.author });
+      if (existingBook) {
+        throw new UserInputError("Book Already exists");
+      }
+
+      if (args.title.length < 4) {
+        throw new UserInputError("title is too short, minimum length is 2", {
+          invalidArgs: args.title,
+        });
+      }
+
+      if (args.author.length < 4) {
+        throw new UserInputError("author is too short,  minimum length is 4", {
+          invalidArgs: args.author,
+        });
+      }
+      const authorExists = await Author.find({ name: { ...args }.author });
       if (!authorExists) {
         try {
-          await new Author({ name: args.author }).save();
+          await new Author({ name: { ...args }.author }).save();
         } catch (error) {
           throw new UserInputError(error.message);
         }
       }
-      const authorToSave = await Author.findOne({ name: args.author });
+      const authorToSave = await Author.findOne({ name: { ...args }.author });
 
-      book = new Book({ ...args, author: authorToSave });
+      const book = new Book({ ...args, author: authorToSave });
 
       try {
         await book.save();
@@ -104,9 +140,33 @@ const resolvers = {
       return book;
     },
     editAuthor: async (root, args) => {
+      if (!currentUser) {
+        throw new AuthenticationError("Authentication Required");
+      }
       const author = await Author.find({ name: args.name });
       author.born = args.setBornTo;
       return author.save();
+    },
+    createUser: async (root, args) => {
+      const user = new User({ ...args });
+
+      return user.save().catch((error) => {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        });
+      });
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+      if (!user || args.password !== "secret") {
+        throw new UserInputError("wrong credentials");
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+      return { value: jwt.sign(userForToken, JWT_SECRET) };
     },
   },
 };
