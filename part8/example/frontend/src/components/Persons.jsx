@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
+
 import { FIND_PERSON } from "../queries";
+
 const Person = ({ person, onClose }) => {
   return (
     <div>

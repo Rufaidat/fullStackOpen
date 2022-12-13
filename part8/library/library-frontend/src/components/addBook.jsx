@@ -12,9 +12,9 @@ const AddBook = ({ render }) => {
   const [newBook] = useMutation(NEW_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
   });
-  useEffect(() => {
-    console.log(genres);
-  }, [genres]);
+  // useEffect(() => {
+  //   console.log(genres);
+  // }, [genres]);
   const submit = (event) => {
     event.preventDefault();
 
