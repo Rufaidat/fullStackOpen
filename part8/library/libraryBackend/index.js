@@ -1,4 +1,5 @@
 const { ApolloServer, gql, UserInputError } = require("apollo-server");
+require("dotenv").config();
 const mongoose = require("mongoose");
 
 const User = require("./models/user");
@@ -31,9 +32,8 @@ const typeDefs = gql`
   }
   type Author {
     name: String!
-    id: String!
+    id: ID!
     born: Int
-    books: [String!]!
     bookCount: Int!
   }
   type User {
@@ -85,11 +85,11 @@ const resolvers = {
       return result;
     },
     allAuthors: async () => {
-      const authors = await Author.find({});
+      let authors = await Author.find({});
       const books = await Book.find({}).populate("author");
-      authors.map((author) => {
+      return authors.map((author) => {
         author.bookCount = books.filter(
-          (book) => book.author === author.name
+          (book) => book.author["name"] === author["name"]
         ).length;
         return author;
       });
@@ -99,7 +99,8 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser;
       if (!currentUser) {
         throw new AuthenticationError("Authentication Required");
       }
@@ -120,15 +121,16 @@ const resolvers = {
           invalidArgs: args.author,
         });
       }
-      const authorExists = await Author.find({ name: { ...args }.author });
+      const authorExists = await Author.findOne({ name: args.author });
       if (!authorExists) {
         try {
-          await new Author({ name: { ...args }.author }).save();
+          const author = new Author({ name: args.author });
+          await author.save();
         } catch (error) {
           throw new UserInputError(error.message);
         }
       }
-      const authorToSave = await Author.findOne({ name: { ...args }.author });
+      const authorToSave = await Author.findOne({ name: args.author });
 
       const book = new Book({ ...args, author: authorToSave });
 
@@ -139,13 +141,15 @@ const resolvers = {
       }
       return book;
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      const currentUser = context.currentUser;
       if (!currentUser) {
         throw new AuthenticationError("Authentication Required");
       }
-      const author = await Author.find({ name: args.name });
+      const author = await Author.findOne({ name: args.name });
       author.born = args.setBornTo;
-      return author.save();
+      await author.save();
+      return author;
     },
     createUser: async (root, args) => {
       const user = new User({ ...args });
@@ -158,6 +162,7 @@ const resolvers = {
     },
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username });
+
       if (!user || args.password !== "secret") {
         throw new UserInputError("wrong credentials");
       }
@@ -166,6 +171,7 @@ const resolvers = {
         username: user.username,
         id: user._id,
       };
+
       return { value: jwt.sign(userForToken, JWT_SECRET) };
     },
   },
