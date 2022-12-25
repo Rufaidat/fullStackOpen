@@ -17,8 +17,11 @@ const AddBook = ({ render }) => {
   // }, [genres]);
   const submit = (event) => {
     event.preventDefault();
+    console.log(published);
 
-    newBook({ variables: { title, author, published, genres } });
+    newBook({
+      variables: { title, author, published: Number(published), genres },
+    });
 
     setAuthor("");
     setTitle("");
@@ -56,7 +59,7 @@ const AddBook = ({ render }) => {
           published{" "}
           <input
             value={published}
-            onChange={({ target }) => setPublished(target.value)}
+            onChange={({ target }) => setPublished(Number(target.value))}
           />
         </div>
         <div>
