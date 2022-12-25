@@ -27,6 +27,11 @@ const AddBook = ({ render }) => {
     render("books");
   };
 
+  const addGenre = () => {
+    setGenres(genres.concat(newGenre));
+    setNewGenre("");
+  };
+
   return (
     <div>
       <form onSubmit={submit}>
@@ -61,17 +66,11 @@ const AddBook = ({ render }) => {
             value={newGenre}
             onChange={({ target }) => setNewGenre(target.value)}
           />{" "}
-          <button
-            type="button"
-            onClick={() => {
-              setGenres(genres.concat(newGenre));
-              console.log(genres);
-            }}
-          >
+          <button type="button" onClick={addGenre}>
             add genre
           </button>
         </div>
-        <div> genres:{[...genres].map((genre) => genre).join(", ")}</div>
+        <div> genres:{[...genres].map((genre) => genre).join(" ")}</div>
         <button type="submit">create book</button>
       </form>
     </div>
