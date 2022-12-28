@@ -3,7 +3,7 @@ import AddBook from "./components/addBook";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import LoginForm from "./components/LoginForm";
-
+import { useApolloClient } from "@apollo/client";
 const Notify = ({ errorMessage }) => {
   if (!errorMessage) {
     return null;
@@ -15,6 +15,14 @@ function App() {
   const [render, setRender] = useState("authors");
   const [token, setToken] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const client = useApolloClient();
+
+  const logout = () => {
+    setToken(null);
+    localStorage.clear();
+    client.resetStore();
+  };
+
   const notify = (message) => {
     setErrorMessage(message);
     setTimeout(() => {
@@ -30,14 +38,18 @@ function App() {
           <button onClick={() => setRender("addBook")}>add book</button>
         )}
         {!token && <button onClick={() => setRender("login")}>login</button>}
-        {token && <button onClick={() => setRender("login")}>logout</button>}
+        {token && <button onClick={logout}>logout</button>}
       </div>
       <Notify errorMessage={errorMessage} />
       {render === "authors" && <Authors />}
       {render === "books" && <Books />}
-      {render === "addBook" && <AddBook render={setRender} />}
+      {render === "addBook" && <AddBook render={setRender} setError={notify} />}
       {render === "login" && (
-        <LoginForm setToken={setToken} setError={notify} />
+        <LoginForm
+          setToken={setToken}
+          setError={notify}
+          setRender={setRender}
+        />
       )}
     </>
   );

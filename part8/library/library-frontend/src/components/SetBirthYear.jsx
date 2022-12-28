@@ -13,7 +13,7 @@ const SetBirthYear = ({ setError, authors }) => {
   const submit = async (event) => {
     event.preventDefault();
 
-    updatesetBornTo({ variables: { name, setBornTo } });
+    updatesetBornTo({ variables: { name, setBornTo: Number(setBornTo) } });
     setName("");
     setSetBornTo("");
   };
