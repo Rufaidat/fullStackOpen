@@ -4,6 +4,9 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import LoginForm from "./components/LoginForm";
 import { useApolloClient } from "@apollo/client";
+import Recommended from "./components/Recommended";
+import { USER } from "./queries";
+import { useQuery } from "@apollo/client";
 const Notify = ({ errorMessage }) => {
   if (!errorMessage) {
     return null;
@@ -12,6 +15,7 @@ const Notify = ({ errorMessage }) => {
 };
 
 function App() {
+  const user = useQuery(USER);
   const [render, setRender] = useState("authors");
   const [token, setToken] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -39,6 +43,9 @@ function App() {
         )}
         {!token && <button onClick={() => setRender("login")}>login</button>}
         {token && <button onClick={logout}>logout</button>}
+        {token && (
+          <button onClick={() => setRender("recommend")}>recommend</button>
+        )}
       </div>
       <Notify errorMessage={errorMessage} />
       {render === "authors" && <Authors />}
@@ -51,6 +58,7 @@ function App() {
           setRender={setRender}
         />
       )}
+      {render === "recommend" && <Recommended user={user} />}
     </>
   );
 }
