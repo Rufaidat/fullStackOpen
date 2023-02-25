@@ -7,16 +7,19 @@ interface calculateValues {
   target: number;
   average: number;
 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const argvNum: any = process.argv.slice(3);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 for (let i = 0; i < argvNum.length; i++) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   argvNum[i] = Number(argvNum[i]);
 }
 
-const b: number = Number(process.argv[2]);
+const b = Number(process.argv[2]);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const a: number[] = argvNum;
 
-const exerciseCalculator = (a: number[], b: number): calculateValues => {
+export const exerciseCalculator = (a: number[], b: number): calculateValues => {
   const train = () => {
     const clone = [...a];
     for (let i = 0; i < clone.length; i++) {

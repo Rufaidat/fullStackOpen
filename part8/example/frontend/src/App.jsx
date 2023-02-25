@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { useQuery, useApolloClient } from "@apollo/client";
+import {
+  useQuery,
+  useMutation,
+  useSubscription,
+  useApolloClient,
+} from "@apollo/client";
 
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
@@ -7,6 +12,7 @@ import PhoneForm from "./components/phoneForm";
 import LoginForm from "./components/LoginForm";
 
 import { ALL_PERSONS } from "./queries";
+import { PERSON_ADDED } from "./queries";
 
 const Notify = ({ errorMessage }) => {
   if (!errorMessage) {
@@ -27,6 +33,11 @@ const App = () => {
     client.resetStore();
   };
 
+  useSubscription(PERSON_ADDED, {
+    onData: ({ data }) => {
+      console.log(data);
+    },
+  });
   if (result.loading) {
     return <div>loading...</div>;
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const mongoose = require("mongoose");
 
 const password = "Rufaidat";
@@ -18,7 +19,8 @@ const contact = new Contact({
 
 mongoose
   .connect(url)
-  .then((result) => {
+  // eslint-disable-next-line no-unused-vars
+  .then((_result) => {
     console.log("connected");
 
     if (process.argv.length === 3)

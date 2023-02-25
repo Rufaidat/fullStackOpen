@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -5,7 +6,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 let morgan = require("morgan");
 const app = express();
-// const Person = require("./models/persons");
+const Person = require("./models/persons");
 
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms ")
@@ -65,16 +66,16 @@ app.post("/api/persons", (request, response, next) => {
 });
 
 app.get("/info", (request, response) => {
-  // const date = new Date();
-
-  // const person = `Phonebook has info ${count} for people
-  // ${date} `;
-  // response.send(person);
+  const date = new Date();
+  // eslint-disable-next-line no-undef
+  const person = `Phonebook has info ${count} for people
+  ${date} `;
+  response.send(person);
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then((response) => {
       response.status(204).end();
     })
     .catch((error) => next(error));
@@ -112,6 +113,7 @@ const errorHandler = (error, request, response, next) => {
 };
 
 app.use(errorHandler);
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

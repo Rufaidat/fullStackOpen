@@ -21,6 +21,9 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.14",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "eslint": "^8.31.0",
     "ts-node-dev": "^2.0.0"
   },
   "scripts": {
@@ -28,7 +31,8 @@
     "calculateBmi": "ts-node bmiCalculator.ts",
     "calculateExercises": "ts-node exerciseCalculator.ts",
     "start": "ts-node index.ts",
-    "dev": "ts-node-dev index.ts"
+    "dev": "ts-node-dev index.ts",
+    "lint": "eslint --ext .ts ."
   },
   "author": "Rufaidat Al-siddiq",
   "license": "ISC"

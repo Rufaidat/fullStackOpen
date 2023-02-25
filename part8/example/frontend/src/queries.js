@@ -39,6 +39,16 @@ export const CREATE_PERSON = gql`
   }
 `;
 
+export const PERSON_ADDED = gql`
+  subscription {
+    personAdded {
+      ...PersonDetails
+    }
+  }
+
+  ${PERSON_DETAILS}
+`;
+
 export const FIND_PERSON = gql`
   query findPersonByName($nameToSearch: String!) {
     findPerson(name: $nameToSearch) {
