@@ -1,0 +1,111 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "paul",
+    "author": "mark",
+    "url": "fghjkjnbv",
+    "likes":5
+}
+
+###
+
+GET http://localhost:3003/api/blogs
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "Rays",
+    "name": "Rays",
+    "password": "obom"
+}
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "JalaSem",
+    "name": "AbdulSamii Ajala",
+    "password": "jalasem"
+}
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Canonical string reduction",
+    "author": "Edsger W. Dijkstra",
+    "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    "likes": 12,
+    "userId": "631459fc287274b6ef4ea6ff"
+}
+
+###
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+    "username": "Qiyamat",
+    "password": "Qiyam'arht" 
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlFpeWFtYXQiLCJpZCI6IjYzMTQ2MTgxMWQxNTUwNmM2MGFmYzk5ZCIsImlhdCI6MTY2MjI4NTk0NX0.Zr7UrrpLExpotnWCmR8oIToiAPt7mZ7-af_6jYQm_dQ
+
+{
+    "title": "2 again working on adding comments",
+    "author": "Edsger W. Dijkstra",
+    "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    "likes": 12,
+    "userId": "631459fc287274b6ef4ea6ff",
+    "comments":"just read it"
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlFpeWFtYXQiLCJpZCI6IjYzMTQ2MTgxMWQxNTUwNmM2MGFmYzk5ZCIsImlhdCI6MTY2MjI4NTk0NX0.Zr7UrrpLExpotnWCmR8oIToiAPt7mZ7-af_6jYQm_dQ
+
+{
+   
+"title":"Go To Statement Considered Harmful",
+"author":"Edsger W. Dijkstra",
+"url":"http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Consider…",
+"likes":5,
+    "userId": "631459fc287274b6ef4ea6ff"
+}
+###
+GET http://localhost:3003/api/users
+###
+POST http://localhost:3003/api/blogs:63403f66658bf6fe39c7326c/comments
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlFpeWFtYXQiLCJpZCI6IjYzMTQ2MTgxMWQxNTUwNmM2MGFmYzk5ZCIsImlhdCI6MTY2MjI4NTk0NX0.Zr7UrrpLExpotnWCmR8oIToiAPt7mZ7-af_6jYQm_dQ
+
+{
+    "comments":"Cookie: "
+}
+
+###
+POST http://localhost:3003/api/comments
+Content-Type: application/json
+
+{
+  "comment":"an interesting read",
+  "id":"6335d4e8cb550d0bc69ffcd2"
+}
+
+POST http://localhost:3003/api/comments
+Content-Type: application/json
+{
+  "comment":"an interesting read",
+  "id":"6335d4e8cb550d0bc69ffcd2"
+}
+
+###
+GET http://localhost:3003/api/users
